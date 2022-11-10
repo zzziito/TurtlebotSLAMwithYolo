@@ -18,7 +18,8 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 
-#include <yoloturtle/filteredbBox.h>
+#include <ctime>
+#include "yoloturtle/filteredbBox.h"
 using namespace std;
 
 
@@ -39,4 +40,8 @@ private:
 
     
 
+}
+
+int main(int argc, char **argv){
+    return 0;
 }

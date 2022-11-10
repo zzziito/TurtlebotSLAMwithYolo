@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
   message_generation
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -61,8 +62,8 @@ add_message_files(
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
-#   Service1.srv
-#   Service2.srv
+#   filtered_bBox.srv
+#   # Service2.srv
 # )
 
 ## Generate actions in the 'action' folder
@@ -77,6 +78,7 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   geometry_msgs
+  ${MESSAGE_DEPENDENCIES}
 )
 
 ################################################
@@ -112,7 +114,7 @@ catkin_package(
 #  INCLUDE_DIRS include
  LIBRARIES custom_msg_pkg
 #  LIBRARIES yoloturtle
- CATKIN_DEPENDS cv_bridge image_geometry image_transport image_view laser_geometry roscpp tf message_runtime std_msgs
+ CATKIN_DEPENDS cv_bridge image_geometry image_transport image_view laser_geometry roscpp tf message_runtime std_msgs ${MESSAGE_DEPENDENCIES}
 #  DEPENDS system_lib
 )
 
@@ -127,6 +129,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+link_directories(${catkin_LIBRARY_DIRS})
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/yoloturtle.cpp
@@ -135,12 +139,13 @@ include_directories(
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(yoloturtle yoloturtle_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(yoloturtle_node src/yoloturtle_node.cpp)
+add_executable(yoloturtle src/yoloturtle.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,7 +158,7 @@ add_executable(yoloturtle_node src/yoloturtle_node.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(yoloturtle_node
+target_link_libraries(yoloturtle
   ${catkin_LIBRARIES}
 )
 
