@@ -544,7 +544,7 @@ void* YoloObjectDetector::publishInThread() {
 
   // Publish bounding boxes and detection result.
   int num = roiBoxes_[0].num;
-  if (num > 0 && num <= 100) {
+  if (num >= 0 && num <= 100) {
     for (int i = 0; i < num; i++) {
       for (int j = 0; j < numClasses_; j++) {
         if (roiBoxes_[i].Class == j) {
@@ -555,11 +555,11 @@ void* YoloObjectDetector::publishInThread() {
     }
 
     darknet_ros_msgs::ObjectCount msg;
-    msg.header.stamp = ros::Time::now();
+    msg.header.stamp = boundingBoxesResults_.image_header.stamp;
     msg.header.frame_id = "detection";
     msg.count = num;
     objectPublisher_.publish(msg);
-
+    boundingBoxesResults_.image_header = headerBuff_[(buffIndex_ + 1) % 3];
     for (int i = 0; i < numClasses_; i++) {
       if (rosBoxCounter_[i] > 0) {
         darknet_ros_msgs::BoundingBox boundingBox;
@@ -577,17 +577,17 @@ void* YoloObjectDetector::publishInThread() {
           boundingBox.ymin = ymin;
           boundingBox.xmax = xmax;
           boundingBox.ymax = ymax;
-          boundingBoxesResults_.bounding_boxes.push_back(boundingBox);
+	  boundingBox.stamp = boundingBoxesResults_.image_header.stamp;
+	  boundingBoxesResults_.bounding_boxes.push_back(boundingBox);
         }
       }
     }
-    boundingBoxesResults_.header.stamp = ros::Time::now();
+    boundingBoxesResults_.header.stamp = boundingBoxesResults_.image_header.stamp;
     boundingBoxesResults_.header.frame_id = "detection";
-    boundingBoxesResults_.image_header = headerBuff_[(buffIndex_ + 1) % 3];
     boundingBoxesPublisher_.publish(boundingBoxesResults_);
   } else {
     darknet_ros_msgs::ObjectCount msg;
-    msg.header.stamp = ros::Time::now();
+    msg.header.stamp = boundingBoxesResults_.image_header.stamp;
     msg.header.frame_id = "detection";
     msg.count = 0;
     objectPublisher_.publish(msg);
