@@ -1,0 +1,8 @@
+<launch>
+  <param name="/use_sim_time" value="False" />
+
+  <node name="yoloturtle" pkg="yoloturtle" type="yoloturtle_node" output="screen">
+
+  </node>
+
+</launch>
